@@ -1,5 +1,5 @@
 
-#include <glfwxx/common.hpp>
+#include <GLFW/glfw3.h>
 #include <glfwxx/instance_manager.hpp>
 #include <stdexcept>
 #include <thread>

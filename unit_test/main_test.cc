@@ -23,9 +23,7 @@ int main() {
         std::cout << "test!!!" << std::endl;
     });
 
-    for (auto &x : manager.get_window_manager().get_pool()) {
-        x.second->show();
-    }
+    window.get_window()->show();
 
     glfw::window_id_t id(0);
     id.set_manager(manager.get_window_manager());

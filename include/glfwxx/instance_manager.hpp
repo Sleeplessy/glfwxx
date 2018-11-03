@@ -6,6 +6,7 @@
 #define GLFWXX_INSTANCE_MANAGER_HPP
 
 // make this header independent with others
+#include <glfwxx/common.hpp>
 #include <glfwxx/window.hpp>
 
 namespace glfw {

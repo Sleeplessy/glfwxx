@@ -3,17 +3,15 @@
 //
 
 #include <algorithm>
-
+#include <sstream>
+#include <GLFW/glfw3.h>
 #include <glfwxx/common.hpp>
 #include <glfwxx/window.hpp>
-#include <GLFW/glfw3.h>
-#include <cassert>
-#include <sstream>
 
-glfw::window::window(int width, int height, std::string title) : raw_handle{
-        glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr)}, title(title) {
 
-}
+glfw::window::window(int width, int height, std::string title) :
+    raw_handle{glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr)},
+    title(title) {}
 
 GLFWwindow *glfw::window::data() {
     return raw_handle;
@@ -34,7 +32,6 @@ void glfw::window::update() {
     if (glfwWindowShouldClose(raw_handle)) {
         delete this;
     } else {
-
         glfwSwapBuffers(raw_handle);
     }
 }
@@ -60,8 +57,8 @@ glfw::window_manager::~window_manager() {
 glfw::window_id_t glfw::window_manager::create_window(int width, int height, std::string title,
                                                       const std::function<void(window_ptr_t)> &callback) {
     glfw::window_id_t id = get_pool().size();
+    id.set_manager(this);
     get_pool()[id] = std::make_shared<glfw::window>(width, height, title);
-    id.set_manager(*this);
     glfwSetWindowCloseCallback(id.get_window().get()->data(), invoke_close_callback);
     if (callback != nullptr) {
         close_callback_map[id] = callback;
@@ -124,7 +121,7 @@ void glfw::window_manager::add_window_callback(glfw::window_id_t id, const std::
 
 glfw::window_ptr_t &glfw::window_manager::get_window(int id) {
     window_id_t id_wrapper(id);
-    id_wrapper.set_manager(*this);
+    id_wrapper.set_manager(this);
     return get_window(id_wrapper);
 }
 
@@ -144,9 +141,14 @@ void glfw::window_id_t::set_id(int id) {
     m_id = id;
 }
 
+void glfw::window_id_t::set_manager(glfw::window_manager *manager) {
+    m_manager = manager;
+}
+
 void glfw::window_id_t::set_manager(glfw::window_manager &manager) {
     m_manager = &manager;
 }
+
 
 glfw::window_ptr_t &glfw::window_id_t::get_window() {
     if(m_manager)

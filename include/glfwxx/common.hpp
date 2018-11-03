@@ -6,6 +6,13 @@
 #define GLFWXX_COMMON_HPP
 
 // Bring up GLFW headers
+#ifdef GLFWXX_INCLUDE_GLFW
 #include <GLFW/glfw3.h>
+#endif
+
+#ifndef GLFW_VERSION_MAJOR
+struct GLFWwindow;
+struct GLFWmonitor;
+#endif
 
 #endif //GLFWXX_COMMON_HPP

@@ -5,16 +5,11 @@
 #ifndef GLFWXX_WINDOW_HPP
 #define GLFWXX_WINDOW_HPP
 
-#ifndef GLFW_VERSION_MAJOR
-struct GLFWwindow;
-struct GLFWmonitor;
-#endif
-
 #include <string>
 #include <map>
 #include <memory>
 #include <functional>
-
+#include <glfwxx/common.hpp>
 namespace glfw {
 
     struct window_id_t;
@@ -88,6 +83,7 @@ namespace glfw {
 
         void set_id(int id);
 
+        void set_manager(window_manager *manager);
         void set_manager(window_manager &manager);
 
         window_ptr_t &get_window();  // get the window pointer using this id(will find in it's manager)
