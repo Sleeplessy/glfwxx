@@ -23,7 +23,7 @@ int main() {
         std::cout << "test!!!" << std::endl;
     });
 
-    window.get_window()->show();
+    window.get_window()->hide();
 
     glfw::window_id_t id(0);
     id.set_manager(manager.get_window_manager());
@@ -39,6 +39,13 @@ int main() {
         std::cout << e.what() << std::endl;
     }
 
+
+    manager.get_window_manager().add_keyboard_callback(window2,[&](glfw::window_ptr_t ptr,int key, int scancode, int action, int mods){
+        if(key == GLFW_KEY_ENTER && action == GLFW_PRESS)
+        {
+            window.get_window()->show();
+        }
+    });
     manager.poll();
     return 0;
 }

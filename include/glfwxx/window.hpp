@@ -29,15 +29,16 @@ namespace glfw {
         GLFWwindow *data();  // get the original GLFWwindow pointer
 
         virtual void show();
+        virtual void hide();
 
         void update();
 
         void get_focus();  // focus on this window
 
-        operator GLFWwindow *() { return raw_handle; }
+        operator GLFWwindow *() { return raw_handle.get(); }
 
     private:
-        GLFWwindow *raw_handle;
+        std::shared_ptr<GLFWwindow> raw_handle;
         std::string title;  // window title
     };
 
@@ -59,6 +60,7 @@ namespace glfw {
                                   const std::function<void(window_ptr_t)> &callback = nullptr);
 
         void add_window_callback(window_id_t id, const std::function<void(window_ptr_t)> &callback);
+        void add_keyboard_callback(window_id_t id, const std::function<void(window_ptr_t, int, int, int,int)> &callback);
 
         window_ptr_t &get_window(window_id_t id);  // find a window using it's id
         window_ptr_t &get_window(int id);  // find a window using it's id
@@ -71,10 +73,12 @@ namespace glfw {
         void update_all();  // update all window managed by this manager
         void show_all();
         static window_id_t find_id(GLFWwindow *handle);  // find window id using handle
-        static void invoke_close_callback(GLFWwindow *handle);
+        static void invoke_key_callback(GLFWwindow *handle, int key, int scancode, int action, int mods);// invoke the key events for every window
+        static void invoke_close_callback(GLFWwindow *handle);  // invoke the close events for every window
 
     private:
         static std::map<window_id_t, window_ptr_t> m_raw_handle_pool;
+        static std::map<window_id_t, std::function<void(window_ptr_t, int, int, int,int)>> keyboard_callback_map;
         static std::map<window_id_t, std::function<void(window_ptr_t)>> close_callback_map;
     };
 
