@@ -18,7 +18,7 @@ The purpose for creating this lib is for my personal usage. I need to create a c
 
 ** Examples
 
-Simplest example sources contains in the unit_test directory. You can check it and it will build with the libary(currently 
+Simplest example sources contains in the unit_test directory. You can check it and it will build with the library(currently 
 it will).
 
 
@@ -32,46 +32,48 @@ void invoke_close_callback(GLFWwindow* window)
 {
     // Well, I have to define my callback here.
 }
-
-//....blah blah blah
-if(!glfwInit())
+// Our lovely main function
+int main()
 {
+//....blah blah blah
+  if(!glfwInit())
+  {
     // Oops, we can't init GLFW so we need to do error handling here, usually exit this program with an error code.
     return -1;
-}
+    }
 
 // blah blah blah....
 
-GLFWwindow* window = glfwCreateWindow(width,height,title); // Simplest window creation
-if(window)
-{
+  GLFWwindow* window = glfwCreateWindow(width,height,title); // Simplest window creation
+  if(window)
+  {
     // maybe I want to set the callback of this window's destroyment
     glfwSetWindowCloseCallback(window, invoke_close_callback);
 
     glfwShowWindow(window); // Bring the window on to user's monitor
-}
+  }
 
 // blah blah blah, maybe I am dealing up with Vulkan or OpenGL or DirectX or etc.
 
 // Now let's enter the main-loop
-while(!glfwWindowShouldClose(window))
-{
+  while(!glfwWindowShouldClose(window))
+  {
     // we update windows here
     // we create our rendered frames here
     // .... blah blah blah
     // and now we show polling events
     glfwPollEvents();  // Or maybe you like glfwWaitEvents()? Whatever
+  }
+  // Okay we exit the loop if we received a close signal of this window
+  // Now let's destroy all the contents we've allocated
+
+  glfwDestroyWindow(window);
+
+  // blah blah blah...
+
+  // After all, do not forget to terminate 
+  glfwTerminate();
 }
-// Okay we exit the loop if we received a close signal of this window
-// Now let's destroy all the contents we've allocated
-
-glfwDestroyWindow(window);
-
-// blah blah blah...
-
-// After all, do not forget to terminate 
-
-
 #+END_SRC
 But with glfwxx, you can do things like:
 
