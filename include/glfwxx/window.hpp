@@ -90,7 +90,9 @@ namespace glfw {
 
         void set_manager(window_manager &manager);
 
-        window_ptr_t &get_window();
+        window_ptr_t &get_window();  // get the window pointer using this id(will find in it's manager)
+
+        inline operator int() noexcept { return m_id;}  // converting to int
 
         int m_id;
         window_manager *m_manager;

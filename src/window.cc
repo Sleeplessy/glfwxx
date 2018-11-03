@@ -8,6 +8,7 @@
 #include <glfwxx/window.hpp>
 #include <GLFW/glfw3.h>
 #include <cassert>
+#include <sstream>
 
 glfw::window::window(int width, int height, std::string title) : raw_handle{
         glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr)}, title(title) {
@@ -24,7 +25,7 @@ glfw::window::~window() {
 
 
 void glfw::window::show() {
-    glfwShowWindow(data());
+    glfwShowWindow(raw_handle);
 }
 
 void glfw::window::update() {
@@ -135,7 +136,7 @@ void glfw::window_manager::show_all() {
 }
 
 
-glfw::window_id_t::window_id_t(int id) : m_id(id) {
+glfw::window_id_t::window_id_t(int id) : m_id{id}, m_manager{nullptr} {
 
 }
 
@@ -148,5 +149,13 @@ void glfw::window_id_t::set_manager(glfw::window_manager &manager) {
 }
 
 glfw::window_ptr_t &glfw::window_id_t::get_window() {
-    return m_manager->get_window(*this);
+    if(m_manager)
+        return m_manager->get_window(*this);
+    else  // pointer to manager is null, maybe this is a manually inited var
+    {
+        std::stringstream ss;
+        ss << this << " id:"<< m_id << " " << __FUNCTION__ << " : m_manager is null";
+        throw std::runtime_error(ss.str());
+    }
+
 }

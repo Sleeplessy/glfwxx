@@ -32,6 +32,16 @@ int main() {
     std::cout << id.get_window()->get_title() << std::endl;
     window.get_window()->get_focus();
 
+    glfw::window_id_t id2(2);
+    try {
+        id2.get_window();
+    }
+    catch (std::exception& e)
+    {
+        std::cout << e.what() << std::endl;
+        return -1;
+    }
+
     manager.poll();
 
 }
