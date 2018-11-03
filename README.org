@@ -123,8 +123,11 @@ Log is like this(I close window "test 2" firstly):
 
 #+BEGIN_QUOTE
 test1
+
 test2 destroyed
+
 test!!!
+
 test1 destroyed
 #+END_QUOTE
 
