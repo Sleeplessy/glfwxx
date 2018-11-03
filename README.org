@@ -1,0 +1,145 @@
+#+OPTIONS:    H:3 num:nil toc:t \n:nil ::t |:t ^:t -:t f:t *:t tex:t d:(HIDE) tags:not-in-toc
+#+STARTUP:    align fold nodlcheck hidestars oddeven lognotestate
+#+SEQ_TODO:   TODO(t) INPROGRESS(i) WAITING(w@) | DONE(d) CANCELED(c@)
+#+TAGS:       Write(w) Update(u) Fix(f) Check(c) 
+#+TITLE:      glfwxx: A GLFW C++ wrapper
+#+AUTHOR:     Sleeplessy
+#+EMAIL:      asakuracn AT gmail DOT com
+#+LANGUAGE:   en
+#+PRIORITIES: A C B
+#+CATEGORY:   worg
+
+* Introduction
+
+The purpose for creating this lib is for my personal usage. I need to create a cross-platform game, and want a simple,
+ safety C++ window manager.This lib is on the very first stage. If you would like to contribute, do a pull request.
+
+* Tutorial
+
+** Examples
+
+Simplest example sources contains in the unit_test directory. You can check it and it will build with the libary(currently 
+it will).
+
+
+** Tutorial
+
+We all know if you are using GLFW, you need to call some initialization and destroy contents created by GLFW's API.
+This is because GLFW is a C-style library. It uses malloc, not new. So of course you can't use delete or RAII or whatever.
+So your code would be like this:
+#+BEGIN_SRC C++
+void invoke_close_callback(GLFWwindow* window)
+{
+    // Well, I have to define my callback here.
+}
+
+//....blah blah blah
+if(!glfwInit())
+{
+    // Oops, we can't init GLFW so we need to do error handling here, usually exit this program with an error code.
+    return -1;
+}
+
+// blah blah blah....
+
+GLFWwindow* window = glfwCreateWindow(width,height,title); // Simplest window creation
+if(window)
+{
+    // maybe I want to set the callback of this window's destroyment
+    glfwSetWindowCloseCallback(window, invoke_close_callback);
+
+    glfwShowWindow(window); // Bring the window on to user's monitor
+}
+
+// blah blah blah, maybe I am dealing up with Vulkan or OpenGL or DirectX or etc.
+
+// Now let's enter the main-loop
+while(!glfwWindowShouldClose(window))
+{
+    // we update windows here
+    // we create our rendered frames here
+    // .... blah blah blah
+    // and now we show polling events
+    glfwPollEvents();  // Or maybe you like glfwWaitEvents()? Whatever
+}
+// Okay we exit the loop if we received a close signal of this window
+// Now let's destroy all the contents we've allocated
+
+glfwDestroyWindow(window);
+
+// blah blah blah...
+
+// After all, do not forget to terminate 
+
+
+#+END_SRC
+But with glfwxx, you can do things like:
+
+#+BEGIN_SRC C++
+#include <glfwxx/glfwxx.hpp>  // Including our library header, good.
+#include <GLFW/glfw3.h>      // And don't forget to include GLFW's header, kids!
+
+int main()
+{
+    using namespace glfw; // Oh let me just using this for increasing my keyboard's life
+    instance_manager manager; // First we create an instance manager, which could handle all things.
+    auto window = manager.get_window_manager().create_window(400, 800, "test1");  // Yes...? Just a creation of an window.
+    // Notice that the return type of create_window is window_id_t;
+    manager.get_window_manager().add_window_callback(window,[&](glfw::window_ptr_t ptr) {
+        std::cout << ptr->get_title() << " destroyed" << std::endl; // We could use get_title() for getting it's title
+    }); // Yes...? We could simply add callbacks using add_window_callback
+    
+    auto window2 = manager.get_window_manager().create_window(400, 800, "test2", [&](glfw::window_ptr_t ptr) {
+        std::cout << ptr->get_title() << " destroyed" << std::endl;
+    }); // We could also wrap a callback using lambda while are we creating window
+    
+    manager.get_window_manager().add_window_callback(window2,[](glfw::window_ptr_t ptr){
+        std::cout << "test!!!" << std::endl;
+    }); // If one window already has callbacks, it would append to the calling list's end. And yes, this is appending.
+    
+    for (auto &x : manager.get_window_manager().get_pool()) {  // We iterates the windows pool.
+        x.second->show();  // Show all windows we've created. In fact this is equivalent to window_manager::show_all()
+    }
+
+    window_id_t id(0);  // Windows' ID started with "0", so we generate an ID in order to get the first window.
+    id.set_manager(manager.get_window_manager());  // we neet to set the manager manually if you gen the ID manually
+    std::cout << id.get_window()->get_title() << std::endl;
+    id.get_window()->get_focus();  // focus on the first window!
+
+    // Okay, we've done the initialization, now let's start.
+    manager.poll();
+
+    // ... Yes, that's all. If you have nothing much to deal with after all windows destroyed(closed by user),
+    // you can now return. No need to free other memories, the manager itself will handle it.
+    return 0;
+}
+#+END_SRC
+
+
+This simple 17 lines program will create two dark windows, and if you close them all, the program shall exit.
+Log is like this(I close window "test 2" firstly):
+
+#+BEGIN_QUOTE
+test1
+test2 destroyed
+test!!!
+test1 destroyed
+#+END_QUOTE
+
+
+* LICENSE
+
+Copyright [2018] [Sleeplessy]
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Or "LICENSE" located on the root of this repo.
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.

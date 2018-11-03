@@ -74,7 +74,7 @@ namespace glfw {
         const bool all_cleared();  // check if there isn't any window managed
 
         void update_all();  // update all window managed by this manager
-
+        void show_all();
         static window_id_t find_id(GLFWwindow *handle);  // find window id using handle
         static void invoke_close_callback(GLFWwindow *handle);
 

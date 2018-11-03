@@ -127,6 +127,13 @@ glfw::window_ptr_t &glfw::window_manager::get_window(int id) {
     return get_window(id_wrapper);
 }
 
+void glfw::window_manager::show_all() {
+    for(auto &x : get_pool())
+    {
+        x.second->show();
+    }
+}
+
 
 glfw::window_id_t::window_id_t(int id) : m_id(id) {
 
