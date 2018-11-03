@@ -31,19 +31,19 @@ namespace glfw {
 
         const std::string get_title() noexcept;
 
-        GLFWwindow *data();
+        GLFWwindow *data();  // get the original GLFWwindow pointer
 
         virtual void show();
 
         void update();
 
-        void get_focus();
+        void get_focus();  // focus on this window
 
         operator GLFWwindow *() { return raw_handle; }
 
     private:
         GLFWwindow *raw_handle;
-        std::string title;
+        std::string title;  // window title
     };
 
     typedef std::shared_ptr<window> window_ptr_t;
@@ -63,14 +63,17 @@ namespace glfw {
         window_id_t create_window(int width, int height, std::string title = "",
                                   const std::function<void(window_ptr_t)> &callback = nullptr);
 
+        void add_window_callback(window_id_t id, const std::function<void(window_ptr_t)> &callback);
 
-        window_ptr_t &get_window(window_id_t id);
+        window_ptr_t &get_window(window_id_t id);  // find a window using it's id
+        window_ptr_t &get_window(int id);  // find a window using it's id
 
 
         std::map<window_id_t, window_ptr_t> &get_pool() noexcept;
 
-        const bool all_cleared();
-        void update_all();
+        const bool all_cleared();  // check if there isn't any window managed
+
+        void update_all();  // update all window managed by this manager
 
         static window_id_t find_id(GLFWwindow *handle);  // find window id using handle
         static void invoke_close_callback(GLFWwindow *handle);
@@ -88,12 +91,23 @@ namespace glfw {
         void set_manager(window_manager &manager);
 
         window_ptr_t &get_window();
-        long m_id;
+
+        int m_id;
         window_manager *m_manager;
     };
 
     inline bool operator<(const window_id_t &lhs, const window_id_t &rhs) {
         return lhs.m_id < rhs.m_id;
+    }
+
+    inline bool operator==(const window_id_t &lhs, const window_id_t &rhs)
+    {
+        return lhs.m_id == rhs.m_id;
+    }
+
+    inline bool operator==(window_id_t lhs, window_id_t rhs)
+    {
+        return lhs.m_id == rhs.m_id;
     }
 
 }
