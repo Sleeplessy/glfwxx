@@ -39,9 +39,8 @@ int main() {
     catch (std::exception& e)
     {
         std::cout << e.what() << std::endl;
-        return -1;
     }
 
     manager.poll();
-
+    return 0;
 }
