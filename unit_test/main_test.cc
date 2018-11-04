@@ -6,7 +6,6 @@
 #include <glfwxx/instance_manager.hpp>
 #include <iostream>
 #include <GLFW/glfw3.h>
-#include <thread>
 
 int main() {
     glfw::instance_manager manager;

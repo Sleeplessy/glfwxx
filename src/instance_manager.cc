@@ -47,3 +47,11 @@ void glfw::instance_manager::poll() {
 void glfw::instance_manager::set_event_flag(GLFW_POLLING_FLAG flag) {
     m_event_flag = flag;
 }
+
+void glfw::instance_manager::set_vulkan_flag(const bool use_opengl) {
+    glfwDefaultWindowHints();
+    if(!use_opengl)
+    {
+        glfwWindowHint(GLFW_CLIENT_API,GLFW_NO_API);  // if one don't need opengl...
+    }
+}

@@ -30,6 +30,8 @@ namespace glfw {
 
         void set_event_flag(GLFW_POLLING_FLAG flag);
 
+        virtual void set_vulkan_flag(const bool use_opengl = false);
+
         window_id_t create_window(int width, int height, std::string title = "",
                                   const std::function<void(window_ptr_t)> &&callback = nullptr);
 
