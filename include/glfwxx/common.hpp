@@ -6,6 +6,8 @@
 #define GLFWXX_COMMON_HPP
 
 // Bring up GLFW headers
+#include <stdint-gcc.h>
+
 #ifdef GLFWXX_INCLUDE_GLFW
 #include <GLFW/glfw3.h>
 #endif
@@ -18,4 +20,5 @@ namespace std{
     // for the thread class
     class thread;
 }
+
 #endif //GLFWXX_COMMON_HPP

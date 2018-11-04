@@ -8,7 +8,6 @@
 #include <glfwxx/common.hpp>
 #include <glfwxx/window.hpp>
 
-
 glfw::window::window(int width, int height, std::string title) :
         title(title) ,raw_handle(std::shared_ptr<GLFWwindow>(glfwCreateWindow(width,height,title.c_str(), nullptr,
                                                                                nullptr),glfwDestroyWindow)){
