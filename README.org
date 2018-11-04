@@ -95,7 +95,7 @@ int main()
         std::cout << ptr->get_title() << " destroyed" << std::endl;
     }); // We could also wrap a callback using lambda while are we creating window
     
-    manager.get_window_manager().add_window_callback(window2,[](glfw::window_ptr_t ptr){
+    manager.get_window_manager().add_window_close_callback(window2,[](glfw::window_ptr_t ptr){
         std::cout << "test!!!" << std::endl;
     }); // If one window already has callbacks, it would append to the calling list's end. And yes, this is appending.
     

@@ -10,8 +10,8 @@
 
 
 glfw::window::window(int width, int height, std::string title) :
-    title(title) {
-    raw_handle= std::shared_ptr<GLFWwindow>(glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr),glfwDestroyWindow);
+        title(title) ,raw_handle(std::shared_ptr<GLFWwindow>(glfwCreateWindow(width,height,title.c_str(), nullptr,
+                                                                               nullptr),glfwDestroyWindow)){
 }
 
 GLFWwindow *glfw::window::data() {
@@ -27,7 +27,7 @@ void glfw::window::show() {
 }
 
 void glfw::window::hide() {
-    if(glfwGetWindowAttrib(raw_handle.get(),GLFW_VISIBLE))
+    if (glfwGetWindowAttrib(raw_handle.get(), GLFW_VISIBLE))
         glfwHideWindow(raw_handle.get());
 }
 
@@ -50,10 +50,11 @@ void glfw::window::get_focus() {
 }
 
 
-
 std::map<glfw::window_id_t, glfw::window_ptr_t> glfw::window_manager::m_raw_handle_pool;
 std::map<glfw::window_id_t, std::function<void(glfw::window_ptr_t)>> glfw::window_manager::close_callback_map = {};
-std::map<glfw::window_id_t, std::function<void(glfw::window_ptr_t, int, int, int,int)>> glfw::window_manager::keyboard_callback_map = {};
+std::map<glfw::window_id_t, std::function<void(glfw::window_ptr_t, int, int, int,
+                                               int)>> glfw::window_manager::keyboard_callback_map = {};
+
 glfw::window_manager::window_manager() {
 }
 
@@ -84,9 +85,8 @@ glfw::window_ptr_t &glfw::window_manager::get_window(glfw::window_id_t id) {
 void glfw::window_manager::invoke_key_callback(GLFWwindow *handle, int key, int scancode, int action, int mods) {
     auto id = find_id(handle);
     if (id.m_id != -1) {
-        if(keyboard_callback_map[id])
-        {
-            keyboard_callback_map[id](id.get_window(),key,scancode,action,mods);
+        if (keyboard_callback_map[id]) {
+            keyboard_callback_map[id](id.get_window(), key, scancode, action, mods);
         }
     }
 }
@@ -94,8 +94,7 @@ void glfw::window_manager::invoke_key_callback(GLFWwindow *handle, int key, int 
 void glfw::window_manager::invoke_close_callback(GLFWwindow *handle) {
     auto id = find_id(handle);
     if (id.m_id != -1) {
-        if(close_callback_map[id])
-        {
+        if (close_callback_map[id]) {
             close_callback_map[id](id.get_window());
         }
         m_raw_handle_pool.erase(id);
@@ -131,9 +130,11 @@ void glfw::window_manager::add_keyboard_callback(glfw::window_id_t id,
             keyboard_callback_map[id] = callback;
         } else // if it has, append it
         {
-            keyboard_callback_map[id] = [old_wrapper{keyboard_callback_map[id]}, this, callback](window_ptr_t ptr,int key, int scancode, int action, int mods) {
-                old_wrapper(ptr,key,scancode,action,mods);
-                callback(ptr,key,scancode,action,mods);
+            keyboard_callback_map[id] = [old_wrapper{keyboard_callback_map[id]}, this, callback](window_ptr_t ptr,
+                                                                                                 int key, int scancode,
+                                                                                                 int action, int mods) {
+                old_wrapper(ptr, key, scancode, action, mods);
+                callback(ptr, key, scancode, action, mods);
             };
         }
     } else {
@@ -141,7 +142,8 @@ void glfw::window_manager::add_keyboard_callback(glfw::window_id_t id,
     }
 }
 
-void glfw::window_manager::add_window_callback(glfw::window_id_t id, const std::function<void(window_ptr_t)> &callback) {
+void
+glfw::window_manager::add_window_close_callback(glfw::window_id_t id, const std::function<void(window_ptr_t)> &callback) {
     if (m_raw_handle_pool.find(id) !=
         m_raw_handle_pool.end()) // If specified window does not have a callback, simply assigned
     {
@@ -166,14 +168,10 @@ glfw::window_ptr_t &glfw::window_manager::get_window(int id) {
 }
 
 void glfw::window_manager::show_all() {
-    for(auto &x : get_pool())
-    {
+    for (auto &x : get_pool()) {
         x.second->show();
     }
 }
-
-
-
 
 
 glfw::window_id_t::window_id_t(int id) : m_id{id}, m_manager{nullptr} {
@@ -194,12 +192,12 @@ void glfw::window_id_t::set_manager(glfw::window_manager &manager) {
 
 
 glfw::window_ptr_t &glfw::window_id_t::get_window() {
-    if(m_manager)
+    if (m_manager)
         return m_manager->get_window(*this);
     else  // pointer to manager is null, maybe this is a manually inited var
     {
         std::stringstream ss;
-        ss << this << " id:"<< m_id << " " << __FUNCTION__ << " : m_manager is null";
+        ss << this << " id:" << m_id << " " << __FUNCTION__ << " : m_manager is null";
         throw std::runtime_error(ss.str());
     }
 

@@ -59,7 +59,7 @@ namespace glfw {
         window_id_t create_window(int width, int height, std::string title = "",
                                   const std::function<void(window_ptr_t)> &callback = nullptr);
 
-        void add_window_callback(window_id_t id, const std::function<void(window_ptr_t)> &callback);
+        void add_window_close_callback(window_id_t id, const std::function<void(window_ptr_t)> &callback);
         void add_keyboard_callback(window_id_t id, const std::function<void(window_ptr_t, int, int, int,int)> &callback);
 
         window_ptr_t &get_window(window_id_t id);  // find a window using it's id

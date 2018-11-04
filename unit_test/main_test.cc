@@ -11,7 +11,7 @@
 int main() {
     glfw::instance_manager manager;
     auto window = manager.get_window_manager().create_window(400, 800, "test1");
-    manager.get_window_manager().add_window_callback(window,[&](glfw::window_ptr_t ptr) {
+    manager.get_window_manager().add_window_close_callback(window, [&](glfw::window_ptr_t ptr) {
         std::cout << ptr->get_title() << " destroyed" << std::endl;
     });
 
@@ -19,7 +19,11 @@ int main() {
         std::cout << ptr->get_title() << " destroyed" << std::endl;
     });
 
-    manager.get_window_manager().add_window_callback(window2,[](glfw::window_ptr_t ptr){
+    auto window3 = manager.get_window_manager().create_window(400, 800, "test3", [&](glfw::window_ptr_t ptr) {
+        std::cout << ptr->get_title() << " destroyed" << std::endl;
+    });
+
+    manager.get_window_manager().add_window_close_callback(window2, [](glfw::window_ptr_t ptr) {
         std::cout << "test!!!" << std::endl;
     });
 
@@ -41,11 +45,14 @@ int main() {
 
 
     manager.get_window_manager().add_keyboard_callback(window2,[&](glfw::window_ptr_t ptr,int key, int scancode, int action, int mods){
-        if(key == GLFW_KEY_ENTER && action == GLFW_PRESS)
+        if(key == GLFW_KEY_ENTER && action == GLFW_PRESS)  // press Enter to show window1
         {
             window.get_window()->show();
         }
     });
+    manager.set_event_flag(glfw::GLFW_USE_WAIT);
     manager.poll();
+    glfw::instance_manager manager2;
+
     return 0;
 }

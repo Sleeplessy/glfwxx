@@ -2,21 +2,21 @@
 // Created by sleeplessy on 11/3/18.
 //
 
+#include <glfwxx/instance_manager.hpp>
+#define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 #include <iostream>
 int main()
 {
-
-    if(!glfwInit())
+    glfwInit();
+    GLFWwindow* wind = glfwCreateWindow(800,600,"test", nullptr, nullptr);
+    glfwShowWindow(wind);
+    while(!glfwWindowShouldClose(wind))
     {
-        std::cout << "error";
-    }
-    auto window = glfwCreateWindow(400,400,"test", nullptr, nullptr);
-    glfwShowWindow(window);
-    while (!glfwWindowShouldClose(window))
-    {
-        glfwSwapBuffers(window);
         glfwPollEvents();
     }
+
+    glfwDestroyWindow(wind);
+    glfwTerminate();
     return 0;
 }
