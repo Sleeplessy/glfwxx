@@ -8,13 +8,18 @@
 // make this header independent with others
 #include <glfwxx/common.hpp>
 #include <glfwxx/window.hpp>
-
+#include <future>
 namespace glfw {
     enum GLFW_INSTANCE_FLAG {
+        GLFW_RUNNING,   // instance is running
+        GLFW_WANT_QUIT, // instance want quit
+    };
+
+    enum GLFW_POLLING_FLAG
+    {
         GLFW_USE_POLL,  // use glfwPollEvents
         GLFW_USE_WAIT,  // use glfwWaitEvents
     };
-
     class instance_manager {
     public:
         instance_manager();
@@ -23,7 +28,7 @@ namespace glfw {
 
         window_manager &get_window_manager();
 
-        void set_event_flag(GLFW_INSTANCE_FLAG flag);
+        void set_event_flag(GLFW_POLLING_FLAG flag);
 
         window_id_t create_window(int width, int height, std::string title = "",
                                   const std::function<void(window_ptr_t)> &&callback = nullptr);
@@ -32,7 +37,10 @@ namespace glfw {
 
     private:
         window_manager m_window_manager;
-        GLFW_INSTANCE_FLAG m_event_flag;
+        GLFW_POLLING_FLAG m_event_flag;
+
+        std::promise<GLFW_INSTANCE_FLAG> m_instance_flag;
+        std::future<glfw::GLFW_INSTANCE_FLAG> m_quiting_flags;
     };
 }
 

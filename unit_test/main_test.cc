@@ -52,7 +52,12 @@ int main() {
     });
     manager.set_event_flag(glfw::GLFW_USE_WAIT);
     manager.poll();
-    glfw::instance_manager manager2;
+
+    for(int i = 0 ; i < 10 ; i ++)
+    {
+        std::cout<< "I can count while GLFW updating! " << i << std::endl;
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+    }
 
     return 0;
 }
