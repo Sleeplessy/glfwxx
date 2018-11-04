@@ -18,7 +18,7 @@ namespace glfw {
     public:
         window(int width, int height, std::string title = "");
 
-        virtual ~window();
+        virtual ~window() = default;
 
         window(window &&) = delete;
 
@@ -31,11 +31,13 @@ namespace glfw {
         virtual void show();
         virtual void hide();
 
-        void update();
+        virtual const bool is_show();  // check whether window is showed
+
+        virtual void update();  // do updates during every polling on the loop
 
         void get_focus();  // focus on this window
 
-        operator GLFWwindow *() { return raw_handle.get(); }
+        explicit operator GLFWwindow *() { return raw_handle.get(); }
 
     private:
         std::shared_ptr<GLFWwindow> raw_handle;
@@ -64,6 +66,9 @@ namespace glfw {
 
         window_ptr_t &get_window(window_id_t id);  // find a window using it's id
         window_ptr_t &get_window(int id);  // find a window using it's id
+
+        void
+        set_use_vulkan();  // some settings of turning on vulkan support, you should include vulkan header before glfw too
 
 
         std::map<window_id_t, window_ptr_t> &get_pool() noexcept;

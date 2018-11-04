@@ -18,10 +18,6 @@ GLFWwindow *glfw::window::data() {
     return raw_handle.get();
 }
 
-glfw::window::~window() {
-}
-
-
 void glfw::window::show() {
     glfwShowWindow(raw_handle.get());
 }
@@ -47,6 +43,10 @@ const std::string glfw::window::get_title() noexcept {
 
 void glfw::window::get_focus() {
     glfwFocusWindow(raw_handle.get());
+}
+
+const bool glfw::window::is_show() {
+    return static_cast<const bool>(glfwGetWindowAttrib(raw_handle.get(), GLFW_VISIBLE));
 }
 
 
@@ -170,6 +170,15 @@ glfw::window_ptr_t &glfw::window_manager::get_window(int id) {
 void glfw::window_manager::show_all() {
     for (auto &x : get_pool()) {
         x.second->show();
+    }
+}
+
+void glfw::window_manager::set_use_vulkan() {
+    if (!glfwVulkanSupported())  // did not gain a vulkan support
+    {
+        throw std::runtime_error("GLFW Vulkan not supported!");
+    } else {
+        glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);  // needed
     }
 }
 
